@@ -1,10 +1,6 @@
-// API Configuration - Updated for Netlify
-const API_BASE = window.location.hostname === 'localhost' 
-    ? '/api'  // Local development
-    : '/.netlify/functions/proxy';  // Netlify production
+const API_BASE = 'https://dark-pattern-detector.onrender.com/api/v1';
 
 console.log('🌐 Using API endpoint:', API_BASE);
-
 // State
 let currentInputType = 'text';
 let selectedFile = null;
@@ -555,3 +551,4 @@ function startBackgroundAnimation() {
         ball.style.animationDelay = `${index * 2}s`;
     });
 }
+
