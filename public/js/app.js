@@ -1,5 +1,9 @@
-// API Configuration
-const API_BASE = '/api';  // Uses proxy server
+// API Configuration - Updated for Netlify
+const API_BASE = window.location.hostname === 'localhost' 
+    ? '/api'  // Local development
+    : '/.netlify/functions/proxy';  // Netlify production
+
+console.log('🌐 Using API endpoint:', API_BASE);
 
 // State
 let currentInputType = 'text';
@@ -94,17 +98,19 @@ async function checkAPIHealth() {
         const response = await fetch(`${API_BASE}/health`);
         const data = await response.json();
         
-        if (data.status === 'healthy') {
+        if (data.frontend?.status === 'healthy' || data.status === 'healthy') {
             statusBadge.className = 'status-badge connected';
             statusText.textContent = 'API Connected';
             showToast('API connected successfully', 'success');
+            console.log('✅ Backend connected:', data);
         } else {
             throw new Error('API unhealthy');
         }
     } catch (error) {
+        console.error('Health check failed:', error);
         statusBadge.className = 'status-badge disconnected';
         statusText.textContent = 'API Disconnected';
-        showToast('API connection failed', 'error');
+        showToast(`API connection failed: ${error.message}`, 'error');
     }
 }
 
@@ -182,7 +188,6 @@ async function analyze() {
             const response = await fetch(`${API_BASE}/detect/screenshot`, {
                 method: 'POST',
                 body: formData
-                // Don't set Content-Type header - browser sets it with boundary
             });
 
             const data = await response.json();
@@ -480,6 +485,7 @@ function handleFileSelect(file) {
     const uploadArea = document.getElementById('uploadArea');
     const preview = document.getElementById('imagePreview');
     const img = document.getElementById('preview');
+    const fileNameEl = document.getElementById('fileName');
     
     if (uploadArea) uploadArea.classList.add('hidden');
     
@@ -489,6 +495,11 @@ function handleFileSelect(file) {
         if (preview) preview.classList.remove('hidden');
     };
     reader.readAsDataURL(file);
+    
+    if (fileNameEl) {
+        fileNameEl.textContent = `Selected: ${file.name}`;
+        fileNameEl.classList.remove('hidden');
+    }
     
     showToast(`Selected: ${file.name}`, 'info');
 }
