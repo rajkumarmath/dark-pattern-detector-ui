@@ -1,30 +1,33 @@
 {
   "name": "dark-pattern-detector-frontend",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Modern UI for Dark Pattern Detection API",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "build:css": "tailwindcss -i ./src/input.css -o ./public/css/styles.css --watch",
-    "dev:all": "concurrently \"npm run build:css\" \"npm run dev\""
+    "build": "echo 'No build required'",
+    "netlify:dev": "netlify dev"
   },
   "dependencies": {
-    "axios": "^1.13.6",
-    "cors": "^2.8.6",
-    "dotenv": "^16.6.1",
-    "express": "^4.22.1",
-    "express-rate-limit": "^7.5.1",
-    "form-data": "^4.0.5",
-    "helmet": "^7.2.0",
-    "morgan": "^1.10.1",
-    "multer": "^2.1.0"
+    "axios": "^1.6.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "form-data": "^4.0.0",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.27",
+    "autoprefixer": "^10.4.16",
     "concurrently": "^8.2.2",
-    "nodemon": "^3.1.14",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.19"
+    "nodemon": "^3.0.2",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.3.6"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
