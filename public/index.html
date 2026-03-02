@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Pattern Detector</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen overflow-x-hidden">
+    <!-- Animated Background -->
+    <div class="fixed inset-0 -z-10 overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(139,92,246,0.15),transparent_50%),radial-gradient(ellipse_at_bottom,rgba(236,72,153,0.1),transparent_50%)]"></div>
+        <div class="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float"></div>
+        <div class="absolute top-0 -right-4 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float animation-delay-2000"></div>
+        <div class="absolute bottom-0 left-20 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float animation-delay-4000"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <header class="glass-card p-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
+                    🔍
+                </div>
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-bold">
+                        <span class="gradient-text">DARK PATTERN</span>
+                        <span class="text-white"> DETECTOR</span>
+                    </h1>
+                    <p class="text-gray-400 mt-1">AI-powered analysis of manipulative design patterns</p>
+                </div>
+            </div>
+            
+            <!-- Status -->
+            <div id="statusBadge" class="status-badge connected">
+                <span class="status-dot"></span>
+                <span id="statusText">Checking API...</span>
+            </div>
+        </header>
+
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - Input -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Input Type Selector -->
+                <div class="glass-card p-4">
+                    <div class="grid grid-cols-3 gap-2">
+                        <button class="input-type-btn active" data-type="text">
+                            <span class="block text-2xl mb-1">📝</span>
+                            <span class="text-xs">Text</span>
+                        </button>
+                        <button class="input-type-btn" data-type="url">
+                            <span class="block text-2xl mb-1">🌐</span>
+                            <span class="text-xs">URL</span>
+                        </button>
+                        <button class="input-type-btn" data-type="screenshot">
+                            <span class="block text-2xl mb-1">📸</span>
+                            <span class="text-xs">Screenshot</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Input Panels -->
+                <div class="glass-card p-6">
+                    <!-- Text Input -->
+                    <div id="textPanel" class="input-panel active">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Text to Analyze</label>
+                        <textarea 
+                            id="textInput"
+                            rows="6"
+                            class="input-field font-mono text-sm"
+                            placeholder="Paste text here...&#10;&#10;Example: 'You must accept cookies to continue'"
+                        >You must accept cookies to continue</textarea>
+                        <div class="flex justify-between items-center mt-2 text-xs text-gray-500">
+                            <span id="charCount">62 characters</span>
+                            <button id="clearText" class="text-primary-400 hover:text-primary-300 transition">Clear</button>
+                        </div>
+                    </div>
+
+                    <!-- URL Input -->
+                    <div id="urlPanel" class="input-panel hidden">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Website URL</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">🔗</span>
+                            <input 
+                                type="url"
+                                id="urlInput"
+                                class="input-field pl-10"
+                                placeholder="https://example.com"
+                                value="https://example.com"
+                            >
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">Enter any website URL to analyze its content</p>
+                    </div>
+
+                    <!-- Screenshot Input -->
+                    <div id="screenshotPanel" class="input-panel hidden">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Upload Screenshot</label>
+                        <div id="uploadArea" class="upload-area">
+                            <input type="file" id="fileInput" accept="image/*" class="hidden">
+                            <div class="text-center">
+                                <div class="text-5xl mb-3">📤</div>
+                                <p class="text-gray-300">Drag & drop or <span class="text-primary-400 hover:text-primary-300 cursor-pointer">browse</span></p>
+                                <p class="text-xs text-gray-500 mt-2">PNG, JPG up to 10MB</p>
+                            </div>
+                        </div>
+                        <div id="imagePreview" class="mt-4 hidden">
+                            <img id="preview" class="rounded-lg border border-dark-700 max-h-48 mx-auto" alt="Preview">
+                        </div>
+                        <p id="fileName" class="text-xs text-primary-400 mt-2 hidden"></p>
+                    </div>
+
+                    <!-- Analyze Button -->
+                    <button id="analyzeBtn" class="btn-primary w-full mt-6">
+                        <span class="relative z-10 flex items-center justify-center gap-2">
+                            <span>🔍</span>
+                            <span>Analyze Pattern</span>
+                        </span>
+                    </button>
+                </div>
+
+                <!-- Quick Examples -->
+                <div class="glass-card p-6">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        <span class="text-primary-400">⚡</span>
+                        Quick Examples
+                    </h3>
+                    <div class="space-y-2">
+                        <button class="example-btn w-full text-left p-3 rounded-lg bg-dark-800 hover:bg-dark-700 transition text-sm" data-example="forced">
+                            <span class="text-red-400">⚠️</span> "You must create an account to continue"
+                        </button>
+                        <button class="example-btn w-full text-left p-3 rounded-lg bg-dark-800 hover:bg-dark-700 transition text-sm" data-example="shaming">
+                            <span class="text-yellow-400">😔</span> "No thanks, I don't want to save money"
+                        </button>
+                        <button class="example-btn w-full text-left p-3 rounded-lg bg-dark-800 hover:bg-dark-700 transition text-sm" data-example="costs">
+                            <span class="text-pink-400">💰</span> "Total: $49.99 plus processing fee"
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Results -->
+            <div class="lg:col-span-2">
+                <div class="glass-card p-6 min-h-[600px] relative">
+                    <!-- Loading State -->
+                    <div id="loadingState" class="absolute inset-0 glass-card flex items-center justify-center hidden">
+                        <div class="text-center">
+                            <div class="loading-spinner mx-auto mb-4"></div>
+                            <p class="text-gray-400 animate-pulse">Analyzing patterns...</p>
+                        </div>
+                    </div>
+
+                    <!-- Results Content -->
+                    <div id="resultsContent">
+                        <!-- Initial State -->
+                        <div id="initialState" class="h-full flex flex-col items-center justify-center text-center py-20">
+                            <div class="text-7xl mb-6 opacity-30">🔍</div>
+                            <h3 class="text-2xl font-semibold text-gray-400 mb-2">Ready to Analyze</h3>
+                            <p class="text-gray-500 max-w-md">Enter text, URL, or upload a screenshot to detect dark patterns</p>
+                        </div>
+
+                        <!-- Results Display -->
+                        <div id="resultsDisplay" class="hidden space-y-6">
+                            <!-- Pattern Header -->
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <span id="patternBadge" class="pattern-badge">Pattern</span>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-sm text-gray-400">Confidence</div>
+                                    <div id="confidence" class="text-2xl font-bold text-primary-400">85%</div>
+                                </div>
+                            </div>
+
+                            <!-- Risk Score Card -->
+                            <div class="glass-effect rounded-xl p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-semibold">Risk Score</h3>
+                                    <span id="riskLevel" class="text-sm px-3 py-1 rounded-full bg-dark-800">HIGH</span>
+                                </div>
+                                <div class="relative pt-1">
+                                    <div class="flex mb-2 items-center justify-between">
+                                        <div>
+                                            <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-primary-400 bg-primary-900/30">
+                                                Severity
+                                            </span>
+                                        </div>
+                                        <div class="text-right">
+                                            <span id="riskScore" class="text-3xl font-bold text-white">78</span>
+                                            <span class="text-gray-400">/100</span>
+                                        </div>
+                                    </div>
+                                    <div class="overflow-hidden h-3 mb-4 text-xs flex rounded-full bg-dark-800">
+                                        <div id="riskBar" style="width: 78%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-primary-500 to-accent-500"></div>
+                                    </div>
+                                    
+                                    <!-- Risk Breakdown -->
+                                    <div class="grid grid-cols-3 gap-4 mt-6 text-sm">
+                                        <div class="text-center p-3 bg-dark-800 rounded-lg">
+                                            <div class="text-gray-400">Base</div>
+                                            <div id="baseScore" class="text-xl font-bold text-white">65</div>
+                                        </div>
+                                        <div class="text-center p-3 bg-dark-800 rounded-lg">
+                                            <div class="text-gray-400">Intensity</div>
+                                            <div id="intensity" class="text-xl font-bold text-white">1.2x</div>
+                                        </div>
+                                        <div class="text-center p-3 bg-dark-800 rounded-lg">
+                                            <div class="text-gray-400">Context</div>
+                                            <div id="context" class="text-xl font-bold text-white">1.0x</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Explanation -->
+                            <div class="glass-effect rounded-xl p-6">
+                                <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                                    <span>📝</span>
+                                    Why It's Manipulative
+                                </h3>
+                                <div id="explanation" class="text-gray-300 leading-relaxed whitespace-pre-line"></div>
+                                <div id="manipulativePhrases" class="mt-4 flex flex-wrap gap-2"></div>
+                            </div>
+
+                            <!-- Ethical Suggestion -->
+                            <div class="glass-effect rounded-xl p-6 border-l-4 border-success">
+                                <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                                    <span>💡</span>
+                                    Ethical Alternative
+                                </h3>
+                                <div id="suggestionTitle" class="text-xl font-semibold text-success mb-2"></div>
+                                <div id="suggestionDescription" class="text-gray-300 mb-4"></div>
+                                
+                                <!-- Alternatives List -->
+                                <div id="alternatives" class="space-y-2 mb-4">
+                                    <!-- Filled by JS -->
+                                </div>
+
+                                <!-- Code Example -->
+                                <details class="mt-4">
+                                    <summary class="text-primary-400 cursor-pointer hover:text-primary-300">View implementation example</summary>
+                                    <pre id="codeExample" class="mt-4 p-4 bg-dark-900 rounded-lg overflow-x-auto text-sm font-mono text-gray-300"></pre>
+                                </details>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-8 text-center text-sm text-gray-500">
+            <p>Powered by AI • Detects 5+ dark pattern types • Built with ♥ for ethical design</p>
+        </footer>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
