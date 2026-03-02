@@ -6,32 +6,28 @@
   NODE_VERSION = "18"
   NPM_VERSION = "9"
 
-# Redirects for API calls
+# IMPORTANT: Force all API requests to go to your backend
 [[redirects]]
   from = "/api/*"
   to = "https://dark-pattern-detector.onrender.com/api/v1/:splat"
   status = 200
   force = true
-  headers = {X-From = "Netlify"}
 
-# Handle SPA routing
+# Handle SPA routing - this must come AFTER API routes
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-# Headers for security and CORS
+# Headers
 [[headers]]
   for = "/*"
   [headers.values]
     X-Frame-Options = "DENY"
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "no-referrer-when-downgrade"
 
 [[headers]]
   for = "/api/*"
   [headers.values]
     Access-Control-Allow-Origin = "*"
-    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
-    Access-Control-Allow-Headers = "Content-Type"
