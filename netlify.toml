@@ -1,0 +1,43 @@
+[build]
+  command = "npm install"
+  publish = "public"
+
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_VERSION = "9"
+
+# Development settings
+[dev]
+  command = "node server.js"
+  port = 3000
+  publish = "public"
+
+# Redirects for API calls
+[[redirects]]
+  from = "/api/*"
+  to = "https://dark-pattern-detector.onrender.com/api/v1/:splat"
+  status = 200
+  force = true
+  headers = {X-From = "Netlify"}
+
+# Handle SPA routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Headers for security and CORS
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer-when-downgrade"
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type"
